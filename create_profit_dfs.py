@@ -33,13 +33,18 @@ card_prices_df = pd.DataFrame(card_prices, columns=column_names_prices)
 card_prices_df['overall'] = card_prices_df['overall'].apply(pd.to_numeric)
 card_prices_df['buy_now'] = card_prices_df['buy_now'].apply(pd.to_numeric)
 card_prices_df['sell_now'] = card_prices_df['sell_now'].apply(pd.to_numeric)
-
-# arbitrage possibility
 card_prices_df['profit'] = card_prices_df['buy_now']*.9 - card_prices_df['sell_now']
 card_prices_df['profit_margin'] = card_prices_df['profit'] / card_prices_df['sell_now']
 
-df = card_prices_df.loc[:, ['player','overall','buy_now','sell_now','profit']].sort_values('profit', ascending=False)
-df.loc[df['sell_now'] <= 30000]
+df = card_prices_df.loc[:, ['player','overall','series','buy_now','sell_now','profit','profit_margin']].sort_values('profit', ascending=False)
+
+live_golds = df.loc[(df['overall'] >= 80) & (df['overall'] <= 84) & (df['series'] == 'Live') & (df['sell_now'] > 0)]
+
+small_investment = df.loc[df['sell_now'] <= 21_000]
+
+df.loc[(df['sell_now'] <= 30000) & (df['sell_now'] > 0)]
+
+df.loc[(df['profit'] >= 1000) & (df['sell_now'] > 0)]
 
 ##################################################################
 ##################### equipment prices ###########################
@@ -64,9 +69,6 @@ equipment_prices_df.loc[:, ['name','buy_now','sell_now','profit','profit_margin'
 ####################################################################
 ##################### players to buy back ##########################
 ####################################################################
-
-players_to_buy_back = ['Rich Gossage', 'Mark Prior', 'Matt Wieters',
-                       'Fernando Rodney', 'Ernie Banks', 'Eddie Murray']
 
 prices = card_prices_df.drop_duplicates()
 live_series = prices.loc[prices['set'] == '-',:]
