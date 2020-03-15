@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 
 
@@ -7,10 +7,68 @@ class PlayerListing:
     name: str
     best_sell_price: int
     best_buy_price: int
+    profit: float = field(init=False)
+    profit_ratio: float = field(init=False)
 
-    def calc_profit(self):
-        return self.best_buy_price*0.10 - self.best_sell_price
+    def __post_init__(self):
+        self.profit = self.__calc_profit()
+        self.profit_ratio = self.__calc_profit_ratio()
 
+    def __calc_profit(self):
+        """Calculate arbitrage profit of buying and selling"""
+        return round(self.best_sell_price*0.90 - self.best_buy_price, 3)
+
+    def __calc_profit_ratio(self):
+        """Calculate profit ratio, profit / investment"""
+        try:
+            profit_ratio = round(self.__calc_profit() / self.best_buy_price, 3)
+        except ZeroDivisionError:
+            profit_ratio = None
+        return profit_ratio
+
+
+@dataclass
+class MarketData:
+    name: str
+    overall: int
+    rarity: str = field(init=False)
+    buy_now_price: int
+    sell_now_price: int
+    profit: float = field(init=False)
+    profit_ratio: float = field(init=False)
+    series: str
+    set: str
+    team: str
+    pos: str
+
+    def __post_init__(self):
+        self.profit = self.__calc_profit()
+        self.profit_ratio = self.__calc_profit_ratio()
+        self.rarity = self.__get_rarity()
+
+    def __calc_profit(self):
+        """Calculate arbitrage profit of buying and selling"""
+        return round(self.buy_now_price*0.90 - self.sell_now_price, 3)
+
+    def __calc_profit_ratio(self):
+        """Calculate profit ratio, profit / investment"""
+        try:
+            profit_ratio = round(self.__calc_profit() / self.sell_now_price, 3)
+        except ZeroDivisionError:
+            profit_ratio = None
+        return profit_ratio
+
+    def __get_rarity(self):
+        if self.overall > 84:
+            return 'Diamond'
+        elif self.overall > 79:
+            return 'Gold'
+        elif self.overall > 74:
+            return 'Silver'
+        elif self.overall > 64:
+            return 'Bronze'
+        else:
+            return 'Common'
 
 @dataclass
 class Pitches:
@@ -42,6 +100,7 @@ class PlayerStats:
     contact_right: int
     power_left: int
     power_right: int
+    plate_vision: int
     plate_discipline: int
     batting_clutch: int
     bunting_ability: int
