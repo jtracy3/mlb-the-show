@@ -1,9 +1,8 @@
 import requests
 from datetime import datetime
-from schemas import PlayerListing, PlayerStats
+from src.models.schemas import PlayerListing, PlayerStats
 import time
-import pickle
-
+import csv
 
 class ListingAPI:
     """ Connect to The Show Nation API for player listings in the community market """
@@ -84,14 +83,21 @@ class ItemsAPI:
         print(f'Processing time {stop - start}s')
         return [PlayerStats(**player_dict) for player_dict in all_player_stats]
 
+    @staticmethod
+    def to_csv(self):
+        with open('mlb_the_show_players.csv', 'w', newline='') as csvfile:
+            fieldnames = player_stats[0].__dict__.keys()
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for player in player_stats:
+                writer.writerow(player.__dict__)
 
-def pickle_it(data, file):
-    with open(file, 'wb') as f:
-        pickle.dump(data, f)
-
-
-listings_api = ListingAPI()
-# items_api = ItemsAPI()
-player_listings = listings_api.get_all_player_listings()
-# player_stats = items_api.get_all_player_listings()
-pickle_it(player_listings, 'cache.pkl')
+# listings_api = ListingAPI()
+# player_listings = listings_api.get_all_player_listings()
+# player_listings.sort(key=lambda x: x.profit, reverse=True)
+#
+# middle_buy_class = list(filter(lambda x: x.buy_class == '10k to 25k', player_listings))
+# middle_low_buy_class = list(filter(lambda x: x.buy_class == '1k to 10k', player_listings))
+# silver_buy_class = list(filter(lambda x: x.buy_class == '1k and less', player_listings))
+#
+# print('here')

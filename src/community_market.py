@@ -1,8 +1,7 @@
 import requests
 import bs4
 from datetime import datetime
-from schemas import MarketData
-import time
+from src.models.schemas import MarketData
 
 
 class ScrapeMarket:
@@ -12,7 +11,9 @@ class ScrapeMarket:
         self._type = type_
 
     def _parse_webpage(self, page):
-        page = requests.get(self._url, params={'type': self._type, 'page': page})
+        page = requests.get(self._url, params={
+            'type': self._type, 'page': page, 'hide_trends': 1, 'hide_completed_orders': 1
+        })
         return bs4.BeautifulSoup(page.content, 'html.parser')
 
     def __get_number_pages(self):
@@ -55,8 +56,14 @@ class ScrapeMarket:
         return data
 
 
-market = ScrapeMarket()
-market_data = market.get_market_prices()
-market_data.sort(key=lambda x: x.profit, reverse=True)
-
-print('here')
+# market = ScrapeMarket()
+# market_data = market.get_market_prices()
+# # Sort data by profit
+# market_data.sort(key=lambda x: x.profit, reverse=True)
+#
+# # Filter data
+# top_gold_arbitrage = list(filter(lambda x: x.rarity == 'Gold', market_data))
+# top_diamond_arbitrage = list(filter(lambda x: x.rarity == 'Diamond', market_data))
+# top_silver_arbitrage = list(filter(lambda x: x.rarity == 'Silver', market_data))
+#
+# print('here')

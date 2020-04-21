@@ -7,12 +7,14 @@ class PlayerListing:
     name: str
     best_sell_price: int
     best_buy_price: int
+    buy_class: str = field(init=False)
     profit: float = field(init=False)
     profit_ratio: float = field(init=False)
 
     def __post_init__(self):
         self.profit = self.__calc_profit()
         self.profit_ratio = self.__calc_profit_ratio()
+        self.buy_class = self.__buy_class()
 
     def __calc_profit(self):
         """Calculate arbitrage profit of buying and selling"""
@@ -25,6 +27,18 @@ class PlayerListing:
         except ZeroDivisionError:
             profit_ratio = None
         return profit_ratio
+
+    def __buy_class(self):
+        if self.best_buy_price <= 1000:
+            return '1k and less'
+        elif self.best_buy_price <= 10000:
+            return '1k to 10k'
+        elif self.best_buy_price <= 25000:
+            return '10k to 25k'
+        elif self.best_buy_price <= 50000:
+            return '25k to 50k'
+        else:
+            return '50k and more'
 
 
 @dataclass
@@ -115,3 +129,9 @@ class PlayerStats:
     baserunning_ability: int
     baserunning_aggression: int
     pitches: List[Pitches]
+
+    def __hash__(self):
+        return hash((self.name, self.ovr))
+
+    def __eq__(self, other):
+        return (self.name, self.ovr) == (other.name, other.ovr)
