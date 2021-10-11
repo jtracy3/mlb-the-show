@@ -58,6 +58,7 @@ class ScrapeMarket:
 
 # market = ScrapeMarket()
 # market_data = market.get_market_prices()
+
 # # Sort data by profit
 # market_data.sort(key=lambda x: x.profit, reverse=True)
 #

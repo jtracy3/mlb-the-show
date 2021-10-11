@@ -1,6 +1,4 @@
-""" Test shit """
-
-from community_market import ScrapeMarket
+from src.community_market import ScrapeMarket
 
 
 def main():

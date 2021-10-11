@@ -4,6 +4,7 @@ from src.models.schemas import PlayerListing, PlayerStats
 import time
 import csv
 
+
 class ListingAPI:
     """ Connect to The Show Nation API for player listings in the community market """
 
@@ -92,12 +93,15 @@ class ItemsAPI:
             for player in player_stats:
                 writer.writerow(player.__dict__)
 
-# listings_api = ListingAPI()
-# player_listings = listings_api.get_all_player_listings()
-# player_listings.sort(key=lambda x: x.profit, reverse=True)
-#
-# middle_buy_class = list(filter(lambda x: x.buy_class == '10k to 25k', player_listings))
-# middle_low_buy_class = list(filter(lambda x: x.buy_class == '1k to 10k', player_listings))
-# silver_buy_class = list(filter(lambda x: x.buy_class == '1k and less', player_listings))
-#
-# print('here')
+
+listings_api = ListingAPI()
+player_listings = listings_api.get_all_player_listings()
+player_listings.sort(key=lambda x: x.profit, reverse=True)
+
+high_diamond_buy_class = list(filter(lambda x: 20000 <= x.best_buy_price, player_listings))
+low_diamond_buy_class = list(filter(lambda x: 5000 <= x.best_buy_price < 20000, player_listings))
+gold_buy_class = list(filter(lambda x: 1000 <= x.best_buy_price < 5000, player_listings))
+silver_buy_class = list(filter(lambda x: 200 <= x.best_buy_price < 1000, player_listings))
+low_buy_class = list(filter(lambda x: 0 < x.best_buy_price < 200, player_listings))
+
+print('here')

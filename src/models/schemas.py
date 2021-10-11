@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, astuple
 from typing import List
 
 
@@ -55,6 +55,9 @@ class MarketData:
     team: str
     pos: str
 
+    def __iter__(self):
+        return iter(astuple(self))
+
     def __post_init__(self):
         self.profit = self.__calc_profit()
         self.profit_ratio = self.__calc_profit_ratio()
@@ -83,6 +86,7 @@ class MarketData:
             return 'Bronze'
         else:
             return 'Common'
+
 
 @dataclass
 class Pitches:
